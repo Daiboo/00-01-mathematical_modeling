@@ -1,0 +1,38 @@
+clear;close all;clc;
+s=0;N=1000;i=1;
+data=load('data.txt');
+t=data(:,1);x0=data(:,2);
+%%
+while(s<N)
+    U=100*rand(1,2);
+    A=U(1);B=U(2);
+    e=error_ode_fun(A,B,t,x0);  % 求出微分方程数值解
+    E(i)=e;
+    mine=min(E);
+    minE(i)=mine;
+    if(i==1)
+        A0=A;B0=B;
+    else
+        if(minE(i)<minE(i-1))
+            A0=A;B0=B;s=0;
+        else
+            s=s+1;
+        end
+    end
+    i=i+1;
+end
+%%
+emin=minE(end);
+figure(1)
+plot(minE,'k')
+figure(1)
+plot(minE,'k')%画出阶梯迭代图
+xlabel('迭代次数')
+ylabel('误差最小值变化')
+title(['误差最小值为',num2str(emin),',A=',num2str(A0),',B=',num2str(B0)])
+figure(2)
+x=ode_fun(A0,B0,t);
+plot(t,x0,'r',t,x,'k')
+xlabel('t')
+ylabel('x(t)')
+legend('数据','拟合结果')

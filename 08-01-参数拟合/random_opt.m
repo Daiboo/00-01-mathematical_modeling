@@ -1,0 +1,40 @@
+clear;close all;clc;
+data=load('附件.txt');
+x=data(:,1);y=data(:,2);%导入数据
+s=0;N=1000;i=1;%初始化计数值、阈值和循环变量
+%%
+%随机优化算法
+while(s<N)
+    a=3*rand;%rand是产生0-1上的随机数
+    e=error_fun(a,x,y);%带入函数计算
+    E(i)=e;%将当前循环计算出函数值存入Y向量中
+    mine=min(E);%计算当前循环E向量最小值
+    minE(i)=mine;%将当前循环E向量最小值存入向量minE中
+    if(i==1)
+        a0=a;%第一次循环保存自变量
+    else
+        if(minE(i)<minE(i-1))%minE最新一次更新的值比前一次循环小
+            %则认为找到一个更小的值，保存此次循环产生的自变量
+            %同时计数值置0
+            s=0;a0=a;
+        else
+            s=s+1;%反之，计数值增1
+        end
+    end
+    i=i+1;%循环次数增1
+end
+%%
+%输出
+amin=a0
+emin=minE(end)%输出最小值及其对应x值
+figure(1)
+plot(minE,'k')%画出阶梯迭代图
+xlabel('迭代次数')
+ylabel('函数最小值变化')
+ title(['函数最小值为',num2str(emin),',对应自变量为',num2str(amin)])
+figure(2)
+y1=exp(amin*x);
+plot(x,y,'r',x,y1,'k')
+xlabel('x')
+ylabel('y')
+legend('数据','拟合结果')
